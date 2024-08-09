@@ -132,7 +132,9 @@ def interp_xor(net: nn.Module):
     # https://nnsight.net/notebooks/tutorials/attribution_patching/
     
     clean_xor_input = xor_input
+    # TODO continue here
     corrupted_xor_input = ~clean_xor_input # flip bits
+
 
     
     
