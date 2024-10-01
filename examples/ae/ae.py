@@ -15,30 +15,27 @@ test_dataset = datasets.MNIST(root='./data', train=False, download=True, transfo
 train_loader = torch.utils.data.DataLoader(dataset=train_dataset, batch_size=64, shuffle=True)
 test_loader = torch.utils.data.DataLoader(dataset=test_dataset, batch_size=64, shuffle=False)
  
-
+n_feats = 28*28
+n_hidden = 256
+n_code = 64
 
 # Define the autoencoder
 class AE(nn.Module):
     def __init__(self):
         super(AE, self).__init__()
         self.encoder = nn.Sequential(
-            nn.Linear(28*28, 128),
+            nn.Linear(n_feats, n_hidden),
             nn.ReLU(),
-            nn.Linear(128, 64),
+            nn.Linear(n_hidden, n_hidden),
             nn.ReLU(),
-            nn.Linear(64, 12),
-            nn.ReLU(),
-            nn.Linear(12, 3)
+            nn.Linear(n_hidden, n_code),
         )
         self.decoder = nn.Sequential(
-            nn.Linear(3, 12),
+            nn.Linear(n_code, n_hidden),
             nn.ReLU(),
-            nn.Linear(12, 64),
+            nn.Linear(n_hidden, n_hidden),
             nn.ReLU(),
-            nn.Linear(64, 128),
-            nn.ReLU(),
-            nn.Linear(128, 28*28)
-            # nn.Sigmoid()
+            nn.Linear(n_hidden, n_feats),
         )
  
     def forward(self, x):
@@ -54,23 +51,38 @@ class BitAE(nn.Module):
 
         self.bitlinear_kwargs = { "weight_measure": weight_measure, "bias": bias }
         self.encoder = nn.Sequential(
-            BitLinear(28*28, 128, **self.bitlinear_kwargs),
+            BitLinear(n_feats, n_hidden, **self.bitlinear_kwargs),
             nn.ReLU(),
-            BitLinear(128, 64, **self.bitlinear_kwargs),
+            BitLinear(n_hidden, n_hidden, **self.bitlinear_kwargs),
             nn.ReLU(),
-            BitLinear(64, 12, **self.bitlinear_kwargs),
-            nn.ReLU(),
-            BitLinear(12, 3, **self.bitlinear_kwargs)
+            BitLinear(n_hidden, n_code, **self.bitlinear_kwargs),
         )
         self.decoder = nn.Sequential(
-            BitLinear(3, 12, **self.bitlinear_kwargs),
+            BitLinear(n_code, n_hidden, **self.bitlinear_kwargs),
             nn.ReLU(),
-            BitLinear(12, 64, **self.bitlinear_kwargs),
+            BitLinear(n_hidden, n_hidden, **self.bitlinear_kwargs),
             nn.ReLU(),
-            BitLinear(64, 128, **self.bitlinear_kwargs),
-            nn.ReLU(),
-            BitLinear(128, 28*28, **self.bitlinear_kwargs)
-            # nn.Sigmoid()
+            BitLinear(n_hidden, n_feats, **self.bitlinear_kwargs)
+        )
+ 
+    def forward(self, x):
+        x = self.encoder(x)
+        x = self.decoder(x)
+        return x
+
+
+class HybridAE(nn.Module):
+    def __init__(self, weight_measure="AbsMean", bias=True):
+        super(HybridAE, self).__init__()
+
+        self.bitlinear_kwargs = { "weight_measure": weight_measure, "bias": bias }
+        self.encoder = nn.Sequential(
+            BitLinear(n_feats, n_hidden, **self.bitlinear_kwargs),
+            nn.SiLU(),
+            BitLinear(n_hidden, n_code, **self.bitlinear_kwargs),
+        )
+        self.decoder = nn.Sequential(
+            nn.Linear(n_code, n_feats),
         )
  
     def forward(self, x):
@@ -112,5 +124,57 @@ def train(model, train_loader, test_loader, n_epochs=10, lr=1e-3):
         print(f"Epoch {epoch+1}, Test Loss: {running_loss / len(test_loader)}")
     return train_loss, test_loss
 
-model = AE()
-train(model, train_loader, test_loader, n_epochs=20, lr=1e-3)
+
+
+
+# ae = AE()
+# train(ae, train_loader, test_loader, n_epochs=20, lr=1e-3)
+
+
+# bitae = BitAE()
+# train(bitae, train_loader, test_loader, n_epochs=20, lr=1e-3)
+
+hybridae = HybridAE()
+print(hybridae)
+train(hybridae, train_loader, test_loader, n_epochs=20, lr=1e-3)
+
+
+
+
+# Notes
+# =====
+# First setting with incremental reduction up to 3 dimensions, interweaved with ReLU
+# AE w/ MSE obj gets to ~~ 0.03 val/loss after 20 epochs
+# BitAE w/ MSE obj gets to ~~ 0.06 val/loss after 20 epochs
+# AE 2x better than BitAE
+
+#####################################################
+# Code dim: 64, corresponds to ~12x compression ratio
+
+# **Linear** reduction to 64 dims
+# AE w/ MSE obj gets to ~~ 0.009 val/loss after 20 epochs
+# BitAE w/ MSE obj gets to ~~ 0.09 val/loss after 20 epochs
+# AE 10x better than BitAE
+
+# **Nonlinear** reduction to 64 dims, with one hidden layer of 128 units (ReLUs)
+# AE w/ MSE obj gets to ~~ 0.0085 val/loss after 20 epochs
+# BitAE w/ MSE obj gets to ~~ 0.055 val/loss after 20 epochs
+# AE 6x better than BitAE
+
+# **Nonlinear** reduction to 64 dims, with two hidden layers (128, ReLU) in-between
+# AE w/ MSE obj gets to ~~  0.0086 val/loss after 20 epochs
+# BitAE w/ MSE obj gets to ~~ 0.053 val/loss after 20 epochs
+# AE 6x better than BitAE
+
+# Same setting but w/ Linear decoder (HybridAE)
+# HybridAE w/ 768-128-64 linear, then linear decoder ~~ 0.009 after 20 epochs 
+
+# HybridAE w/ 768-128-64 bitlinear, then linear decoder ~~ 0.013 after 20 epochs 
+# HybridAE w/ 768-128-64 bitlinear w/ SiLU act, then linear decoder ~~ 0.013 after 20 epochs 
+
+# HybridAE w/ 768-64 linear, then linear decoder ~~ 0.009 after 20 epochs 
+# HybridAE w/ 768-64 bitlinear, then linear decoder ~~ 0.014 after 20 epochs 
+# HybridAE w/ 768-512-256-128-64 bitlinear w/ SiLU, then linear decoder ~~ 0.012 after 20 epochs 
+# HybridAE w/ 768-256-64 bitlinear w/ SiLU, then linear decoder ~~ 0.012 after 20 epochs 
+
+#####################################################
