@@ -72,14 +72,17 @@ class BitAE(nn.Module):
 
 
 class HybridAE(nn.Module):
-    def __init__(self, weight_measure="AbsMean", bias=True):
+    def __init__(self, weight_measure="AbsMean", activation_measure="AbsMax", bias=True):
         super(HybridAE, self).__init__()
 
-        self.bitlinear_kwargs = { "weight_measure": weight_measure, "bias": bias }
+        self.bitlinear_kwargs = { "weight_measure": weight_measure, "bias": bias, "activation_measure": activation_measure }
         self.encoder = nn.Sequential(
-            BitLinear(n_feats, n_hidden, **self.bitlinear_kwargs),
-            nn.SiLU(),
-            BitLinear(n_hidden, n_code, **self.bitlinear_kwargs),
+            # v1
+            # BitLinear(n_feats, n_hidden, **self.bitlinear_kwargs),
+            # nn.SiLU(),
+            # BitLinear(n_hidden, n_code, **self.bitlinear_kwargs),
+            # v2
+            BitLinear(n_feats, n_code, **self.bitlinear_kwargs),
         )
         self.decoder = nn.Sequential(
             nn.Linear(n_code, n_feats),
@@ -136,7 +139,7 @@ def train(model, train_loader, test_loader, n_epochs=10, lr=1e-3):
 
 hybridae = HybridAE()
 print(hybridae)
-train(hybridae, train_loader, test_loader, n_epochs=20, lr=1e-3)
+train(hybridae, train_loader, test_loader, n_epochs=20, lr=1e-2)
 
 
 
@@ -175,6 +178,22 @@ train(hybridae, train_loader, test_loader, n_epochs=20, lr=1e-3)
 # HybridAE w/ 768-64 linear, then linear decoder ~~ 0.009 after 20 epochs 
 # HybridAE w/ 768-64 bitlinear, then linear decoder ~~ 0.014 after 20 epochs 
 # HybridAE w/ 768-512-256-128-64 bitlinear w/ SiLU, then linear decoder ~~ 0.012 after 20 epochs 
-# HybridAE w/ 768-256-64 bitlinear w/ SiLU, then linear decoder ~~ 0.012 after 20 epochs 
+# HybridAE w/ 768-256-64 bitlinear w/ SiLU, then linear decoder ~~ 0.01247 after 20 epochs 
+
+# HybridAE w/ 768-256-64 AbsMedian bitlinear w/ SiLU, then linear decoder ~~ 0.01222 after 20 epochs 
+# HybridAE w/ 768-256-64 AbsMedian bitlinear w/ SiLU + ACT MEASURE AbsMedian, then linear decoder ~~ 0.01572 after 20 epochs 
+
+# --- now let's do the down proj directly
+# HybridAE w/ 768-64 AbsMean bitlinear, then linear decoder ~~ 0.01422 after 20 epochs 
+# HybridAE w/ 768-64 AbsMedian bitlinear, then linear decoder ~~ 0.01171 after 20 epochs 
+# HybridAE w/ 768-64 AbsMedian bitlinear w/ AbsMedian act-measure, then linear decoder ~~ 0.01540 after 20 epochs 
+# HybridAE w/ 768-64 Linear, then linear decoder ~~ 0.00917 after 20 epochs 
+# HybridAE w/ 768-64 *LR=0.1* AbsMedian bitlinear, then linear decoder ~~ [DNC] after 20 epochs 
+# HybridAE w/ 768-64 *LR=0.01* AbsMedian bitlinear, then linear decoder ~~ 0.018 after 20 epochs 
+# --
+# HybridAE w/ 768-64 *LR=0.01* AbsMean bitlinear, then linear decoder ~~ 0.01364 after 20 epochs 
+# Higher learning rates diverge or are unstable (tested 0.03, 0.05 , 0.1)
+
+
 
 #####################################################
