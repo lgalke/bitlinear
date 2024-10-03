@@ -9,7 +9,7 @@ import torch.nn.functional as F
 from bitlinear import BitLinear, replace_modules
 
 
-USE_BITLINEAR = False   # Toggle this
+USE_BITLINEAR = True   # Toggle this
 BITLINEAR_WEIGHT_MEASURE = "AbsMean"  # AbsMean, AbsMedian
 K = 2
 lr = 0.01
@@ -25,20 +25,19 @@ class BitSGConv(SGConv):
         self.reset_parameters()
 
 
-# Initialize the model and optimizer
-sgc_kwargs = {'K': K, 'add_self_loops': True, 'cached': True, 'aggr': 'sum'}
-if USE_BITLINEAR:
-    model = BitSGConv(dataset.num_features, dataset.num_classes, **sgc_kwargs)
-else:
-    model = SGConv(dataset.num_features, dataset.num_classes, **sgc_kwargs)
-    
-optimizer = torch.optim.AdamW(model.parameters(), lr=lr)
-criterion = nn.CrossEntropyLoss()
+def build_model():
+    # Initialize the model and optimizer
+    sgc_kwargs = {'K': K, 'add_self_loops': True, 'cached': True, 'aggr': 'sum'}
+    if USE_BITLINEAR:
+        model = BitSGConv(dataset.num_features, dataset.num_classes, **sgc_kwargs)
+    else:
+        model = SGConv(dataset.num_features, dataset.num_classes, **sgc_kwargs)
+    return model
+        
 
-print(model)
 
 # Training loop
-def train():
+def train(model):
     model.train()
     optimizer.zero_grad()
     out = model(dataset[0].x, dataset[0].edge_index)
@@ -48,7 +47,7 @@ def train():
     return loss.item()
 
 # Evaluation loop
-def test():
+def test(model):
     model.eval()
     out = model(dataset[0].x, dataset[0].edge_index)
     pred = out.argmax(dim=1)
@@ -57,7 +56,20 @@ def test():
     return acc
 
 # Train and evaluate the model
-for epoch in range(100):
-    train_loss = train()
-    acc = test()
-    print(f'Epoch: {epoch+1}, Train loss: {train_loss:.4f}, Test Accuracy: {acc:.4f}')
+
+final_accuracy_scores = []
+for run in range(9):
+    model = build_model()
+    print(model)
+    optimizer = torch.optim.AdamW(model.parameters(), lr=lr)
+    criterion = nn.CrossEntropyLoss()
+    for epoch in range(100):
+        train_loss = train(model)
+        acc = test(model)
+        print(f'Epoch: {epoch+1}, Train loss: {train_loss:.4f}, Test Accuracy: {acc:.4f}')
+    final_accuracy_scores.append(acc)
+
+print("**********************")
+print("Final accuracy scores:")
+print(final_accuracy_scores)
+print("**********************")

@@ -169,10 +169,10 @@ def main():
     bsz = 100
     break_on_first_solution = False
 
-    lr = 0.1
+    lr = 0.001
 
-    n_hidden = 8  # BitLinear seems to need more than Linear
-    use_bitlinear = True  # change to false for basic MLP
+    n_hidden = 2  # BitLinear seems to need more than Linear
+    use_bitlinear = False  # change to false for basic MLP
     weight_measure = "AbsMedian"  # AbsMean, AbsMedian
     bitlinear_bias = False
 
