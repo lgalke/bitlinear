@@ -1,5 +1,5 @@
 import pandas as pd
-df = pd.read_csv("examples/node_classification/results.csv")
+df = pd.read_csv("results.csv")
 
 df_grouped = df.groupby(["Dataset", "Model"])
 acc_mean = df_grouped["Accuracy"].mean()

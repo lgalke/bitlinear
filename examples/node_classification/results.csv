@@ -89,4 +89,93 @@ Run,Model,k,lr,epochs,Dataset,Accuracy
 8,SGC-1.58b-mean,2,0.01,100,Pubmed,75.10
 9,SGC-1.58b-mean,2,0.01,100,Pubmed,74.50
 10,SGC-1.58b-mean,2,0.01,100,Pubmed,75.00
-
+1,GCNConv,weight_measure=AbsMean improved=False,0.01,100,Cora,0.787
+2,GCNConv,weight_measure=AbsMean improved=False,0.01,100,Cora,0.784
+3,GCNConv,weight_measure=AbsMean improved=False,0.01,100,Cora,0.781
+4,GCNConv,weight_measure=AbsMean improved=False,0.01,100,Cora,0.8
+5,GCNConv,weight_measure=AbsMean improved=False,0.01,100,Cora,0.77
+6,GCNConv,weight_measure=AbsMean improved=False,0.01,100,Cora,0.788
+7,GCNConv,weight_measure=AbsMean improved=False,0.01,100,Cora,0.781
+8,GCNConv,weight_measure=AbsMean improved=False,0.01,100,Cora,0.792
+9,GCNConv,weight_measure=AbsMean improved=False,0.01,100,Cora,0.79
+1,BitGCNConv-AbsMean,weight_measure=AbsMean improved=False,0.01,100,Cora,0.769
+2,BitGCNConv-AbsMean,weight_measure=AbsMean improved=False,0.01,100,Cora,0.761
+3,BitGCNConv-AbsMean,weight_measure=AbsMean improved=False,0.01,100,Cora,0.768
+4,BitGCNConv-AbsMean,weight_measure=AbsMean improved=False,0.01,100,Cora,0.772
+5,BitGCNConv-AbsMean,weight_measure=AbsMean improved=False,0.01,100,Cora,0.765
+6,BitGCNConv-AbsMean,weight_measure=AbsMean improved=False,0.01,100,Cora,0.749
+7,BitGCNConv-AbsMean,weight_measure=AbsMean improved=False,0.01,100,Cora,0.756
+8,BitGCNConv-AbsMean,weight_measure=AbsMean improved=False,0.01,100,Cora,0.757
+9,BitGCNConv-AbsMean,weight_measure=AbsMean improved=False,0.01,100,Cora,0.757
+1,BitGCNConv-AbsMedian,,0.01,100,Cora,0.756
+2,BitGCNConv-AbsMedian,,0.01,100,Cora,0.758
+3,BitGCNConv-AbsMedian,,0.01,100,Cora,0.755
+4,BitGCNConv-AbsMedian,,0.01,100,Cora,0.759
+5,BitGCNConv-AbsMedian,,0.01,100,Cora,0.759
+6,BitGCNConv-AbsMedian,,0.01,100,Cora,0.763
+7,BitGCNConv-AbsMedian,,0.01,100,Cora,0.758
+8,BitGCNConv-AbsMedian,,0.01,100,Cora,0.765
+9,BitGCNConv-AbsMedian,,0.01,100,Cora,0.746
+1,GCNConv,,0.01,100,Citeseer,0.638
+2,GCNConv,,0.01,100,Citeseer,0.631
+3,GCNConv,,0.01,100,Citeseer,0.627
+4,GCNConv,,0.01,100,Citeseer,0.653
+5,GCNConv,,0.01,100,Citeseer,0.644
+6,GCNConv,,0.01,100,Citeseer,0.638
+7,GCNConv,,0.01,100,Citeseer,0.631
+8,GCNConv,,0.01,100,Citeseer,0.64
+9,GCNConv,,0.01,100,Citeseer,0.632
+1,BitGCNConv-AbsMean,,0.01,100,Citeseer,0.664
+2,BitGCNConv-AbsMean,,0.01,100,Citeseer,0.662
+3,BitGCNConv-AbsMean,,0.01,100,Citeseer,0.663
+4,BitGCNConv-AbsMean,,0.01,100,Citeseer,0.663
+5,BitGCNConv-AbsMean,,0.01,100,Citeseer,0.655
+6,BitGCNConv-AbsMean,,0.01,100,Citeseer,0.647
+7,BitGCNConv-AbsMean,,0.01,100,Citeseer,0.647
+8,BitGCNConv-AbsMean,,0.01,100,Citeseer,0.655
+9,BitGCNConv-AbsMean,,0.01,100,Citeseer,0.658
+1,BitGCNConv-AbsMedian,,0.01,100,Citeseer,0.659
+2,BitGCNConv-AbsMedian,,0.01,100,Citeseer,0.651
+3,BitGCNConv-AbsMedian,,0.01,100,Citeseer,0.668
+4,BitGCNConv-AbsMedian,,0.01,100,Citeseer,0.648
+5,BitGCNConv-AbsMedian,,0.01,100,Citeseer,0.645
+6,BitGCNConv-AbsMedian,,0.01,100,Citeseer,0.671
+7,BitGCNConv-AbsMedian,,0.01,100,Citeseer,0.656
+8,BitGCNConv-AbsMedian,,0.01,100,Citeseer,0.638
+9,BitGCNConv-AbsMedian,,0.01,100,Citeseer,0.662
+1,GCNConv,,0.01,100,PubMed,0.759
+2,GCNConv,,0.01,100,PubMed,0.765
+3,GCNConv,,0.01,100,PubMed,0.757
+4,GCNConv,,0.01,100,PubMed,0.76
+5,GCNConv,,0.01,100,PubMed,0.765
+6,GCNConv,,0.01,100,PubMed,0.759
+7,GCNConv,,0.01,100,PubMed,0.756
+8,GCNConv,,0.01,100,PubMed,0.758
+9,GCNConv,,0.01,100,PubMed,0.761
+1,BitGCNConv-AbsMean,,0.01,100,PubMed,0.741
+2,BitGCNConv-AbsMean,,0.01,100,PubMed,0.731
+3,BitGCNConv-AbsMean,,0.01,100,PubMed,0.732
+4,BitGCNConv-AbsMean,,0.01,100,PubMed,0.732
+5,BitGCNConv-AbsMean,,0.01,100,PubMed,0.741
+6,BitGCNConv-AbsMean,,0.01,100,PubMed,0.738
+7,BitGCNConv-AbsMean,,0.01,100,PubMed,0.73
+8,BitGCNConv-AbsMean,,0.01,100,PubMed,0.737
+9,BitGCNConv-AbsMean,,0.01,100,PubMed,0.748
+1,BitGCNConv-AbsMedian,,0.01,100,PubMed,0.723
+2,BitGCNConv-AbsMedian,,0.01,100,PubMed,0.73
+3,BitGCNConv-AbsMedian,,0.01,100,PubMed,0.737
+4,BitGCNConv-AbsMedian,,0.01,100,PubMed,0.734
+5,BitGCNConv-AbsMedian,,0.01,100,PubMed,0.725
+6,BitGCNConv-AbsMedian,,0.01,100,PubMed,0.743
+7,BitGCNConv-AbsMedian,,0.01,100,PubMed,0.739
+8,BitGCNConv-AbsMedian,,0.01,100,PubMed,0.731
+9,BitGCNConv-AbsMedian,,0.01,100,PubMed,0.734
+10,GCNConv,,0.01,100,Cora,0.784
+10,BitGCNConv-AbsMean,,0.01,100,Cora,0.749
+10,BitGCNConv-AbsMedian,,0.01,100,Cora,0.757
+10,GCNConv,,0.01,100,Citeseer,0.642
+10,BitGCNConv-AbsMean,,0.01,100,Citeseer,0.669
+10,BitGCNConv-AbsMedian,,0.01,100,Citeseer,0.662
+10,GCNConv,,0.01,100,PubMed,0.762
+10,BitGCNConv-AbsMean,,0.01,100,PubMed,0.721
+10,BitGCNConv-AbsMedian,,0.01,100,PubMed,0.727
